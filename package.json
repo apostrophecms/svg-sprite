@@ -30,5 +30,10 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "glob": "^7.2.0",
+    "node-fetch": "^3.1.0",
+    "xml2js": "^0.4.23"
   }
 }

@@ -30,7 +30,10 @@ describe('SVG Sprites', function () {
     assert(apos.modules['@apostrophecms/svg-sprites-widget']);
   });
 
-  // it('', async () => {
-  //   assert();
-  // });
+  it('can run the import task', async () => {
+    const imported = await apos.tasks.invoke('apostrophe-svg-sprites:import');
+
+    console.info('🇧🇭', imported);
+    assert(imported);
+  });
 });

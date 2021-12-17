@@ -22,7 +22,7 @@ describe('SVG Sprites', function () {
             session: { secret: 'test-the-svgs' }
           }
         },
-        '@apostrophecms/svg-sprites': {
+        '@apostrophecms/svg-sprite': {
           options: {
             maps: [
               {
@@ -33,18 +33,19 @@ describe('SVG Sprites', function () {
             ]
           }
         },
-        '@apostrophecms/svg-sprites-widget': {}
+        '@apostrophecms/svg-sprite-widget': {}
       }
     });
 
-    assert(apos.modules['@apostrophecms/svg-sprites']);
-    svgSprites = apos.modules['@apostrophecms/svg-sprites'];
-    assert(apos.modules['@apostrophecms/svg-sprites-widget']);
+    assert(apos.modules['@apostrophecms/svg-sprite']);
+    svgSprites = apos.modules['@apostrophecms/svg-sprite'];
+    console.info('*️⃣', svgSprites.__meta.name);
+    assert(apos.modules['@apostrophecms/svg-sprite-widget']);
   });
 
   it('can run the import task', async () => {
     try {
-      await apos.task.invoke('@apostrophecms/svg-sprites:import');
+      await apos.task.invoke('@apostrophecms/svg-sprite:import');
     } catch (error) {
       assert(!error);
     }
@@ -65,7 +66,7 @@ describe('SVG Sprites', function () {
   });
 
   it('marks existing sprites', function() {
-    apos.doc.db.updateMany({ type: '@apostrophecms/svg-sprites' }, {
+    apos.doc.db.updateMany({ type: '@apostrophecms/svg-sprite' }, {
       $set: {
         existing: true
       }

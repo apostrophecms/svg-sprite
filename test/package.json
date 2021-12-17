@@ -4,6 +4,6 @@
   "//-": "exist in package.json at project level, which for a test is here",
   "dependencies": {
     "apostrophe": "^3.9.0",
-    "@apostrophecms/svg-sprites": "git://github.com/apostrophecms/svg-sprites.git"
+    "@apostrophecms/svg-sprite": "git://github.com/apostrophecms/svg-sprite.git"
   }
 }

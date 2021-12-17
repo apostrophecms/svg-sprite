@@ -66,7 +66,7 @@ module.exports = {
               };
 
             } else {
-              const base = `${self.apos.rootDir}/modules/@apostrophecms/svg-sprites/public/`;
+              const base = `${self.apos.rootDir}/modules/@apostrophecms/svg-sprite/public/`;
               const path = base + map.file;
 
               if (path.includes('*')) {
@@ -81,7 +81,7 @@ module.exports = {
                   map.file = file;
 
                   // TODO: A3 doesn't have assetUrl server-side. Confirm this.
-                  map.finalFile = self.apos.prefix + '/modules/@apostrophecms/my-svg-sprites/' + file;
+                  map.finalFile = self.apos.prefix + '/modules/@apostrophecms/my-svg-sprite/' + file;
 
                   return {
                     data,
@@ -99,7 +99,7 @@ module.exports = {
               } else {
                 if (fileExists(path)) {
                   // TODO: A3 doesn't have assetUrl server-side. Confirm this.
-                  map.finalFile = self.apos.prefix + '/modules/@apostrophecms/my-svg-sprites/' + map.file;
+                  map.finalFile = self.apos.prefix + '/modules/@apostrophecms/my-svg-sprite/' + map.file;
 
                   const data = await readFile(path);
 

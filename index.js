@@ -1,8 +1,9 @@
 const fs = require('fs');
 const glob = require('glob');
-const { default: fetch } = require('node-fetch');
+const axios = require('axios');
 const xml2js = require('xml2js');
 const path = require('path');
+const _ = require('lodash');
 
 module.exports = {
   extend: '@apostrophecms/piece-type',
@@ -31,34 +32,26 @@ module.exports = {
         usage: 'aposSvgs:taskUsage',
         async task () {
           const maps = self.options.maps;
-          const req = self.apos.tasks.getReq();
+          const req = self.apos.task.getReq();
           const readFile = require('util').promisify(fs.readFile);
           const parseString = require('util').promisify(xml2js.parseString);
 
           for (const map of maps) {
+            console.info('🍁', map);
             const { data, updatedMap } = await loadMap(map);
 
             const svgs = await parseMap(data, updatedMap);
 
-            evaluateForUpsert(svgs);
+            await evaluateForUpsert(svgs);
           }
-
-          // async.eachSeries(maps, function (map, callback) {
-          //   return async.waterfall([
-          //     async.apply(loadMap, map),
-          //     parseMap,
-          //     evaluateForUpsert
-          //   ], callback);
-          // }, callback);
-
-          return 'TODO';
 
           async function loadMap(map) {
             const pattern = /(http(s)?)/gi;
 
             if (pattern.test(map.file)) {
               // file is a full url, load it via `request` module
-              const response = await fetch(map.file);
+              const response = await axios.get(map.file);
+              console.info('0️⃣', response);
               if (!response.ok) {
                 // TODO: Check for 400 error
                 // this ain't the way to get the error code.
@@ -87,8 +80,8 @@ module.exports = {
                   // Correct map.file to point to the current actual file,
                   map.file = file;
 
-                  // TODO: I don't think we have assetUrl like this anymore.
-                  map.finalFile = self.apos.asset.assetUrl('/modules/my-apostrophe-svg-sprites/' + file);
+                  // TODO: A3 doesn't have assetUrl server-side. Confirm this.
+                  map.finalFile = self.apos.prefix + '/modules/@apostrophecms/my-svg-sprites/' + file;
 
                   return {
                     data,
@@ -105,10 +98,10 @@ module.exports = {
 
               } else {
                 if (fileExists(path)) {
-                  // TODO: I don't think we have assetUrl like this anymore.
-                  map.finalFile = self.apos.asset.assetUrl('/modules/my-apostrophe-svg-sprites/' + map.file);
+                  // TODO: A3 doesn't have assetUrl server-side. Confirm this.
+                  map.finalFile = self.apos.prefix + '/modules/@apostrophecms/my-svg-sprites/' + map.file;
 
-                  const data = readFile(path);
+                  const data = await readFile(path);
 
                   return {
                     data,
@@ -126,9 +119,9 @@ module.exports = {
             }
           }
 
-          async function parseMap(xml, map) {
-
+          async function parseMap(xml = '', map = {}) {
             const svgs = [];
+            console.info('🇲🇽', xml);
             const result = await parseString(xml);
 
             let symbols = findInObj(result, 'symbol');
@@ -180,44 +173,42 @@ module.exports = {
               }
             }
           }
-          // 👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇
-          // TODO: Continue updating from here.
-          function insertPiece(svg, callback) {
+
+          async function insertPiece(svg) {
             const piece = self.newInstance();
 
             if (svg.symbol.title) {
-              piece.title = apos.launder.string(svg.symbol.title);
+              piece.title = self.apos.launder.string(svg.symbol.title);
             } else {
-              piece.title = apos.launder.string(svg.symbol.id);
+              piece.title = self.apos.launder.string(svg.symbol.id);
             }
 
-            piece.id = svg.symbol.id;
+            piece.svgId = svg.symbol.id;
             piece.file = svg.file;
             piece.map = svg.map;
 
-            return self.insert(req, piece, {
+            await self.insert(req, piece, {
               permissions: false
-            }, callback);
-
+            });
           }
 
-          function updatePiece(doc, svg, callback) {
+          async function updatePiece(doc, svg, callback) {
             const updateFields = {};
 
             if (svg.symbol.title) {
-              updateFields.title = apos.launder.string(svg.symbol.title);
+              updateFields.title = self.apos.launder.string(svg.symbol.title);
             } else {
-              updateFields.title = apos.launder.string(svg.symbol.id);
+              updateFields.title = self.apos.launder.string(svg.symbol.id);
             }
 
             updateFields.file = svg.file;
             updateFields.map = svg.map;
 
-            return apos.docs.db.update({
+            await self.apos.doc.db.updateOne({
               _id: doc._id
             }, {
               $set: updateFields
-            }, callback);
+            });
           }
 
           function fileExists(path) {
@@ -233,6 +224,7 @@ module.exports = {
             if (_.has(obj, key)) {
               return [ obj ];
             }
+            // TODO: replace lodash? or use flatMap?
             return _.flatten(_.map(obj, function (v) {
               return typeof v === 'object' ? findInObj(v, key) : [];
             }), true);

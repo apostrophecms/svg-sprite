@@ -21,7 +21,17 @@ describe('SVG Sprites', function () {
             session: { secret: 'test-the-svgs' }
           }
         },
-        '@apostrophecms/svg-sprites': {},
+        '@apostrophecms/svg-sprites': {
+          options: {
+            maps: [
+              {
+                label: 'Places Icons',
+                name: 'places',
+                file: 'svg/places.svg'
+              }
+            ]
+          }
+        },
         '@apostrophecms/svg-sprites-widget': {}
       }
     });
@@ -31,9 +41,11 @@ describe('SVG Sprites', function () {
   });
 
   it('can run the import task', async () => {
-    const imported = await apos.tasks.invoke('apostrophe-svg-sprites:import');
-
-    console.info('🇧🇭', imported);
-    assert(imported);
+    try {
+      await apos.task.invoke('@apostrophecms/svg-sprites:import');
+    } catch (error) {
+      console.error('🇧🇭', error);
+      assert(!error);
+    }
   });
 });

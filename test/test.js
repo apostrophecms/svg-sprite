@@ -65,11 +65,24 @@ describe('SVG Sprites', function () {
     console.info('#️⃣', howMany);
   });
 
-  it('marks existing sprites', function() {
-    apos.doc.db.updateMany({ type: '@apostrophecms/svg-sprite' }, {
-      $set: {
-        existing: true
-      }
-    });
+  it('marks existing sprites', async function() {
+    try {
+      await apos.doc.db.updateMany({ type: '@apostrophecms/svg-sprite' }, {
+        $set: {
+          existing: true
+        }
+      });
+    } catch (error) {
+      assert(!error);
+    }
   });
+
+  it('can re-import', async function() {
+    try {
+      await apos.task.invoke('@apostrophecms/svg-sprite:import');
+    } catch (error) {
+      assert(!error);
+    }
+  });
+
 });

@@ -49,7 +49,7 @@ module.exports = {
             const pattern = /(http(s)?)/gi;
 
             if (pattern.test(map.file)) {
-              // file is a full url, load it via `request` module
+              // file is a full url, load it via axios module
               const response = await axios.get(map.file);
               console.info('0️⃣', response);
               if (!response.ok) {
@@ -66,10 +66,12 @@ module.exports = {
               };
 
             } else {
+              // file is a relative file path
               const base = `${self.apos.rootDir}/modules/@apostrophecms/svg-sprite/public/`;
               const path = base + map.file;
 
               if (path.includes('*')) {
+                // TODO: Test this path
                 const files = glob(path).sync();
 
                 if (files.length) {
@@ -121,7 +123,6 @@ module.exports = {
 
           async function parseMap(xml = '', map = {}) {
             const svgs = [];
-            console.info('🇲🇽', xml);
             const result = await parseString(xml);
 
             let symbols = findInObj(result, 'symbol');
@@ -160,10 +161,11 @@ module.exports = {
 
           async function evaluateForUpsert(svgs) {
             for (const svg of svgs) {
+              console.info('🌒', !!svg.symbol);
               const docs = await self.find(req, {
-                id: svg.symbol.id
+                svgId: svg.symbol.id
               }, {}).toArray();
-
+              console.info('🌓', docs.length ? '👍' : '👎');
               if (docs.length) {
                 // i have a doc, update it
                 await updatePiece(docs[0], svg);

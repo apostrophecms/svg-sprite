@@ -85,4 +85,15 @@ describe('SVG Sprites', function () {
     }
   });
 
+  it('finds the same number of pieces and they are the same pieces', async function() {
+    const req = apos.task.getReq();
+    const pieces = await svgSprites.find(req, {})
+      .toArray();
+
+    assert(pieces);
+    assert(pieces.length);
+    console.info(pieces.length);
+    assert(pieces.length === howMany);
+    assert(pieces[0].existing);
+  });
 });

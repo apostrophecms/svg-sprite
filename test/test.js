@@ -3,6 +3,7 @@ const testUtil = require('apostrophe/test-lib/test');
 
 describe('SVG Sprites', function () {
   let apos;
+  let svgSprites;
 
   this.timeout(10000);
 
@@ -37,6 +38,7 @@ describe('SVG Sprites', function () {
     });
 
     assert(apos.modules['@apostrophecms/svg-sprites']);
+    svgSprites = apos.modules['@apostrophecms/svg-sprites'];
     assert(apos.modules['@apostrophecms/svg-sprites-widget']);
   });
 
@@ -44,8 +46,29 @@ describe('SVG Sprites', function () {
     try {
       await apos.task.invoke('@apostrophecms/svg-sprites:import');
     } catch (error) {
-      console.error('🇧🇭', error);
       assert(!error);
     }
+  });
+
+  let howMany;
+
+  it('can find imported pieces', async function() {
+    const req = apos.task.getReq();
+
+    const pieces = await svgSprites.find(req, {})
+      .toArray();
+
+    assert(pieces);
+    assert(pieces.length);
+    howMany = pieces.length;
+    console.info('#️⃣', howMany);
+  });
+
+  it('marks existing sprites', function() {
+    apos.doc.db.updateMany({ type: '@apostrophecms/svg-sprites' }, {
+      $set: {
+        existing: true
+      }
+    });
   });
 });

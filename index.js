@@ -2,15 +2,10 @@ const fs = require('fs');
 const glob = require('glob');
 const axios = require('axios');
 const xml2js = require('xml2js');
-const path = require('path');
 const _ = require('lodash');
 
 module.exports = {
   extend: '@apostrophecms/piece-type',
-  bundle: {
-    directory: 'modules',
-    modules: getBundleModuleNames()
-  },
   options: {
     label: 'aposSvgs:label',
     pluralLabel: 'aposSvgs:pluralLabel',
@@ -37,7 +32,7 @@ module.exports = {
           const parseString = require('util').promisify(xml2js.parseString);
 
           for (const map of maps) {
-            console.info('🍁', map);
+            // console.info('🍁', map);
             const { data, updatedMap } = await loadMap(map);
 
             const svgs = await parseMap(data, updatedMap);
@@ -51,7 +46,7 @@ module.exports = {
             if (pattern.test(map.file)) {
               // file is a full url, load it via axios module
               const response = await axios.get(map.file);
-              console.info('0️⃣', response);
+              // console.info('3️⃣', response);
               if (!response.ok) {
                 // TODO: Check for 400 error
                 // this ain't the way to get the error code.
@@ -161,11 +156,11 @@ module.exports = {
 
           async function evaluateForUpsert(svgs) {
             for (const svg of svgs) {
-              console.info('🌒', !!svg.symbol);
+              // console.info('🌒', !!svg.symbol);
               const docs = await self.find(req, {
                 svgId: svg.symbol.id
               }, {}).toArray();
-              console.info('🌓', docs.length ? '👍' : '👎');
+              // console.info('🌓', docs.length ? '👍' : '👎');
               if (docs.length) {
                 // i have a doc, update it
                 await updatePiece(docs[0], svg);
@@ -236,11 +231,3 @@ module.exports = {
     };
   }
 };
-
-function getBundleModuleNames() {
-  const source = path.join(__dirname, './modules/@apostrophecms');
-  return fs
-    .readdirSync(source, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => `@apostrophecms/${dirent.name}`);
-}

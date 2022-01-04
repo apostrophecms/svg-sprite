@@ -50,16 +50,22 @@ describe('SVG Sprites', function () {
   });
 
   let howMany;
+  let firstSprites;
 
   it('can find imported pieces', async function() {
     const req = apos.task.getReq();
 
-    const pieces = await svgSprites.find(req, {})
+    firstSprites = await svgSprites.find(req, {})
       .toArray();
 
-    assert(pieces);
-    assert(pieces.length === 2);
-    howMany = pieces.length;
+    assert(firstSprites);
+    assert(firstSprites.length === 2);
+    howMany = firstSprites.length;
+  });
+
+  it('can find the SVG file path on the piece', async function () {
+    const assetPath = apos.asset.getAssetBaseUrl() + '/modules/@apostrophecms/my-svg-sprite/svg/places.svg';
+    assert(firstSprites[0].file === assetPath);
   });
 
   it('marks existing sprites', async function() {
@@ -140,15 +146,22 @@ describe('SVG Sprites', function () {
     }
   });
 
+  let secondSprites;
+
   it('can find URL-imported pieces', async function() {
     const req = apos2.task.getReq();
 
-    const pieces = await apos2.modules['@apostrophecms/svg-sprite'].find(req, {})
+    secondSprites = await apos2.modules['@apostrophecms/svg-sprite'].find(req, {})
       .toArray();
 
-    assert(pieces);
+    assert(secondSprites);
 
-    assert(pieces.length === 3);
+    assert(secondSprites.length === 3);
+  });
+
+  it('can find the SVG file path on the piece', async function () {
+    const assetPath = `${apos2.baseUrl}/three-places.svg`;
+    assert(secondSprites[0].file === assetPath);
   });
 
   let apos3;
@@ -191,14 +204,22 @@ describe('SVG Sprites', function () {
     }
   });
 
+  let thirdSprites;
+
   it('can find wild card-imported pieces', async function() {
     const req = apos3.task.getReq();
 
-    const pieces = await apos3.modules['@apostrophecms/svg-sprite'].find(req, {})
+    thirdSprites = await apos3.modules['@apostrophecms/svg-sprite'].find(req, {})
       .toArray();
 
-    assert(pieces);
+    assert(thirdSprites);
 
-    assert(pieces.length === 4);
+    assert(thirdSprites.length === 4);
+  });
+
+  it('can find the SVG file path on the piece', async function () {
+    const assetPath = apos3.asset.getAssetBaseUrl() + '/modules/@apostrophecms/my-svg-sprite/svg/icons-8675309.svg';
+
+    assert(thirdSprites[2].file === assetPath);
   });
 });

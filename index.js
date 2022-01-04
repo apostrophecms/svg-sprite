@@ -32,7 +32,6 @@ module.exports = {
           const parseString = require('util').promisify(xml2js.parseString);
 
           for (const map of maps) {
-            // console.info('🍁', map);
             const { data, updatedMap } = await loadMap(map);
 
             const svgs = await parseMap(data, updatedMap);
@@ -46,14 +45,15 @@ module.exports = {
             if (pattern.test(map.file)) {
               // file is a full url, load it via axios module
               const response = await axios.get(map.file);
-              // console.info('3️⃣', response);
-              if (!response.ok) {
-                // TODO: Check for 400 error
-                // this ain't the way to get the error code.
-                throw new Error(response);
+
+              if (response.status >= 400 && response.status < 500) {
+                throw self.apos.error('notfound');
+              } else if (response.status !== 200) {
+                self.apos.util.error(response);
+                throw self.apos.error('error');
               }
 
-              const data = response.body;
+              const data = response.data;
 
               return {
                 data,
@@ -156,11 +156,11 @@ module.exports = {
 
           async function evaluateForUpsert(svgs) {
             for (const svg of svgs) {
-              // console.info('🌒', !!svg.symbol);
+
               const docs = await self.find(req, {
                 svgId: svg.symbol.id
               }, {}).toArray();
-              // console.info('🌓', docs.length ? '👍' : '👎');
+
               if (docs.length) {
                 // i have a doc, update it
                 await updatePiece(docs[0], svg);

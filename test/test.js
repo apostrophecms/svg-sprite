@@ -10,6 +10,7 @@ describe('SVG Sprites', function () {
   after(async function () {
     testUtil.destroy(apos);
     testUtil.destroy(apos2);
+    testUtil.destroy(apos3);
   });
 
   it('should be a property of the apos object', async function () {
@@ -148,5 +149,56 @@ describe('SVG Sprites', function () {
     assert(pieces);
 
     assert(pieces.length === 3);
+  });
+
+  let apos3;
+
+  it('should be a property of the apos3 object', async function () {
+    apos3 = await testUtil.create({
+      shortname: 'test-exporter-3',
+      testModule: true,
+      modules: {
+        '@apostrophecms/express': {
+          options: {
+            session: { secret: 'test-the-svgs-a-third-time' }
+          }
+        },
+        '@apostrophecms/svg-sprite': {
+          options: {
+            maps: [
+              {
+                label: 'All Icons',
+                name: 'icons',
+                file: 'svg/icons-*.svg'
+              }
+            ]
+          }
+        }
+      }
+    });
+
+    assert(apos3.modules['@apostrophecms/svg-sprite']);
+  });
+
+  it('can import with a wild card', async () => {
+    try {
+      // Importer is running from the wild card path in the apos3 module
+      // configuration.
+      await apos3.task.invoke('@apostrophecms/svg-sprite:import');
+    } catch (error) {
+      console.error(error);
+      assert(!error);
+    }
+  });
+
+  it('can find wild card-imported pieces', async function() {
+    const req = apos3.task.getReq();
+
+    const pieces = await apos3.modules['@apostrophecms/svg-sprite'].find(req, {})
+      .toArray();
+
+    assert(pieces);
+
+    assert(pieces.length === 4);
   });
 });

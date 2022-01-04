@@ -21,6 +21,37 @@ module.exports = {
     // Auto-publish (no draft state)
     autopublish: true
   },
+  fields (self) {
+    const mapChoices = (self.options.maps || []).map(map => {
+      return {
+        label: map.label,
+        value: map.name
+      };
+    });
+
+    return {
+      add: {
+        svgId: {
+          label: 'ID',
+          type: 'string',
+          help: 'ID of the <symbol> element in the map',
+          required: true
+        },
+        map: {
+          label: 'Map',
+          type: 'select',
+          choices: mapChoices,
+          required: true,
+          readOnly: true
+        }
+      },
+      group: {
+        basics: {
+          fields: [ 'svgId', 'map' ]
+        }
+      }
+    };
+  },
   tasks (self) {
     return {
       import: {
@@ -66,8 +97,8 @@ module.exports = {
               const path = base + map.file;
 
               if (path.includes('*')) {
-                // TODO: Test this path
-                const files = glob(path).sync();
+                const asyncGlob = require('util').promisify(glob);
+                const files = await asyncGlob(path);
 
                 if (files.length) {
                   const data = await readFile(files[0]);

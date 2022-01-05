@@ -9,7 +9,7 @@ module.exports = {
     },
     // Opt out of open graph, SEO, search, and quick create
     openGraph: false,
-    seo: false,
+    seoFields: false,
     searchable: false,
     quickCreate: false,
     // Auto-publish (no draft state)
@@ -26,13 +26,14 @@ module.exports = {
     return {
       add: {
         svgId: {
-          label: 'ID',
+          label: 'SVG symbol ID',
           type: 'string',
-          help: 'ID of the <symbol> element in the map',
-          required: true
+          help: 'ID of the <symbol> element in the sprite map',
+          required: true,
+          readOnly: true
         },
         map: {
-          label: 'Map',
+          label: 'Sprite Map',
           type: 'select',
           choices: mapChoices,
           required: true,

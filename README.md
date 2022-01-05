@@ -92,7 +92,7 @@ When using the partial file path options, the module will look for those files i
 Sprite files use the [SVG `symbol` element](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/symbol) to include multiple SVG images within a single `svg` tag. See the [CSS-Tricks](https://css-tricks.com/svg-symbol-good-choice-icons/) guide for more information about how to construct and use these sprite files.
 
 **Requirements for this module include:**
-- Sprite maps must be formatted so that all `<symbol>...<symbol/>` elements are on the same node level. This simply mean that `symbol` tags should not be nested within other `symbol` tags.
+- Sprite maps must be formatted so that all `<symbol>...<symbol/>` elements are on the same node level. This simply means that `symbol` tags should not be nested within other `symbol` tags.
 - `symbol` tags must have an `id` attribute, e.g., `<symbol id="bicycle">...</symbol>`.
 - `symbol` tags can *optionally* have a `title` attribute that will be used as the imported piece's title field, e.g., `<symbol title="Bicycle icon">...</symbol>`
 

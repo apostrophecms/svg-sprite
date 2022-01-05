@@ -12,7 +12,7 @@ module.exports = {
     seoFields: false,
     searchable: false,
     quickCreate: false,
-    // Auto-publish (no draft state)
+    // Auto-publish (no draft state, but you can localize them)
     autopublish: true
   },
   fields (self) {

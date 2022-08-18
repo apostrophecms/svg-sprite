@@ -1,6 +1,6 @@
 {
   "name": "@apostrophecms/svg-sprite",
-  "version": "1.0.0-beta",
+  "version": "1.0.0",
   "description": "Module to power SVG sprite elements as pieces in Apostrophe 3 projects",
   "main": "index.js",
   "scripts": {

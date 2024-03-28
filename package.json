@@ -24,15 +24,15 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "mocha": "^7.2.0"
+    "mocha": "^10.4.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "axios": "^0.24.0",
+    "axios": "^1.6.8",
     "glob": "^7.2.0",
     "lodash": "^4.17.21",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.6.2"
   }
 }

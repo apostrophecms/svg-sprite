@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.1 (2024-04-18)
 
 - Fix vulnerable dependencies axios, xml2js and mocha to pass npm audit.
 

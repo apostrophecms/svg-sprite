@@ -2,7 +2,7 @@
 
 ## UNRELEASED
 
-* Adds AI-generated missing translations
+* Adds AI-generated and community reviewed missing translations
 
 ## 1.0.1 (2024-04-18)
 
